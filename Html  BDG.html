@@ -1,0 +1,223 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cute Pink Budget Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* GENERAL STYLING */
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #ffe6f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #ff66a3;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff0f5;
+            border-radius: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .flex-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .card {
+            flex: 1 1 250px;
+            background-color: #ffd9ec;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border: 2px solid #ffb3cc;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #ff66a3;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #ff3385;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ffb3cc;
+        }
+
+        th {
+            background-color: #ff99c2;
+            color: white;
+            border-radius: 10px;
+        }
+
+        .summary {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .summary span {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        @media(max-width:700px){
+            .flex-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💖 Cute Pink Budget Calculator 💖</h1>
+
+        <div class="flex-row">
+            <!-- Income Card -->
+            <div class="card">
+                <h2>Add Income</h2>
+                <input type="text" id="incomeName" placeholder="Income source (e.g., Part-time job)">
+                <input type="number" id="incomeAmount" placeholder="Amount ($)">
+                <button onclick="addIncome()">Add Income</button>
+                <table id="incomeTable">
+                    <thead>
+                        <tr>
+                            <th>Source</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <!-- Expenses Card -->
+            <div class="card">
+                <h2>Add Expense</h2>
+                <input type="text" id="expenseName" placeholder="Expense name (e.g., Coffee)">
+                <input type="number" id="expenseAmount" placeholder="Amount ($)">
+                <select id="expenseCategory">
+                    <option value="Food">Food</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Books">Books</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Other">Other</option>
+                </select>
+                <button onclick="addExpense()">Add Expense</button>
+                <table id="expenseTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Summary Card -->
+        <div class="card summary">
+            <h2>Summary 💖</h2>
+            <p>Total Income: $<span id="totalIncome">0</span></p>
+            <p>Total Expenses: $<span id="totalExpenses">0</span></p>
+            <p>Balance: $<span id="balance">0</span></p>
+        </div>
+    </div>
+
+    <script>
+        let incomes = [];
+        let expenses = [];
+
+        function addIncome() {
+            const name = document.getElementById('incomeName').value;
+            const amount = parseFloat(document.getElementById('incomeAmount').value);
+            if(name && amount > 0){
+                incomes.push({name, amount});
+                document.getElementById('incomeName').value = '';
+                document.getElementById('incomeAmount').value = '';
+                updateTables();
+            } else {
+                alert("Please enter a valid income.");
+            }
+        }
+
+        function addExpense() {
+            const name = document.getElementById('expenseName').value;
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            const category = document.getElementById('expenseCategory').value;
+            if(name && amount > 0){
+                expenses.push({name, category, amount});
+                document.getElementById('expenseName').value = '';
+                document.getElementById('expenseAmount').value = '';
+                updateTables();
+            } else {
+                alert("Please enter a valid expense.");
+            }
+        }
+
+        function updateTables() {
+            // Update income table
+            const incomeBody = document.querySelector('#incomeTable tbody');
+            incomeBody.innerHTML = '';
+            let totalIncome = 0;
+            incomes.forEach(item => {
+                const row = `<tr><td>${item.name}</td><td>$${item.amount.toFixed(2)}</td></tr>`;
+                incomeBody.innerHTML += row;
+                totalIncome += item.amount;
+            });
+
+            // Update expense table
+            const expenseBody = document.querySelector('#expenseTable tbody');
+            expenseBody.innerHTML = '';
+            let totalExpenses = 0;
+            expenses.forEach(item => {
+                const row = `<tr><td>${item.name}</td><td>${item.category}</td><td>$${item.amount.toFixed(2)}</td></tr>`;
+                expenseBody.innerHTML += row;
+                totalExpenses += item.amount;
+            });
+
+            // Update summary
+            document.getElementById('totalIncome').textContent = totalIncome.toFixed(2);
+            document.getElementById('totalExpenses').textContent = totalExpenses.toFixed(2);
+            document.getElementById('balance').textContent = (totalIncome - totalExpenses).toFixed(2);
+        }
+    </script>
+</body>
+</html>
